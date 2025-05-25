@@ -3,6 +3,7 @@ package types
 type Team struct {
 	Name         string `json:"name"`
 	Strength     int    `json:"strength"`
+	Points       int    `json:"points"`
 	Played       int    `json:"played"`
 	Won          int    `json:"won"`
 	Drawn        int    `json:"drawn"`

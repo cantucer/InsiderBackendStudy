@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"insiderbackendstudy/types"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -56,4 +57,52 @@ func UpdateTeamStats(conn *pgx.Conn, teamName string, goalsFor, goalsAgainst int
 		return err
 	}
 	return nil
+}
+
+func GetTeams(conn *pgx.Conn) ([]types.Team, error) {
+	rows, err := conn.Query(context.Background(), `
+		SELECT name, strength, points, played, won, drawn, lost, goalsFor, goalsAgainst
+		FROM teams
+		ORDER BY points DESC, goalsFor - goalsAgainst DESC;
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var teams []types.Team
+	for rows.Next() {
+		var team types.Team
+		if err := rows.Scan(&team.Name, &team.Strength, &team.Points, &team.Played,
+			&team.Won, &team.Drawn, &team.Lost, &team.GoalsFor, &team.GoalsAgainst); err != nil {
+			return nil, err
+		}
+		teams = append(teams, team)
+	}
+
+	return teams, nil
+}
+
+func GetMatches(conn *pgx.Conn) ([]types.Match, error) {
+	rows, err := conn.Query(context.Background(), `
+		SELECT homeTeam, awayTeam, isPlayed, homeGoals, awayGoals, week
+		FROM matches
+		ORDER BY week;
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var matches []types.Match
+	for rows.Next() {
+		var match types.Match
+		if err := rows.Scan(&match.HomeTeam.Name, &match.AwayTeam.Name, &match.IsPlayed,
+			&match.HomeGoals, &match.AwayGoals, &match.Week); err != nil {
+			return nil, err
+		}
+		matches = append(matches, match)
+	}
+
+	return matches, nil
 }
