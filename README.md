@@ -6,7 +6,7 @@ League Simulation API Project for Insider's internship program.
 You can try the API without setting up an environment yourself.
 The server will be up from 25/05/2025 to 24/06/2025, and is running on a Compute Engine VM Instance of Google Cloud.
 There is no authorization.
-Public IP: 35.239.226.80
+Public IP: `35.239.226.80`
 Refer to the endpoints for testing, and use the given public IP as the hostname instead of localhost.
 
 # Setting Up
