@@ -15,11 +15,13 @@ Port: `8080`
 Refer to the endpoints for testing, and use the given public IP as the hostname instead of localhost.
 
 # Setting Up
-1- Prepare the .env file according to the given .env.example
+1- Set up a PostgreSQL database. Preferably use PostgreSQL 15 or later. Name the user and database as you wish. Remember the program will be creating tables named "teams" and "matches" in the database you've provided.
 
-2- Run main.go
+2- Prepare the .env file according to the given .env.example. Enter the correct credentials for the PostgreSQL database.
 
-3- Refer to the hostname accordingly.
+3- Run main.go
+
+4- Refer to the hostname accordingly.
 
 
 # Endpoints
