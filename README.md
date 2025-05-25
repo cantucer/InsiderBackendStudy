@@ -126,14 +126,14 @@ Host: localhost:8080
   [
     {
       "name": "Team1",
+      "points": 6,
       "strength": 100,
       "played": 3,
       "won": 2,
       "drawn": 0,
       "lost": 1,
       "goalsFor": 5,
-      "goalsAgainst": 3,
-      "points": 6
+      "goalsAgainst": 3
     },
     { /* ... */ }
   ]
@@ -160,12 +160,12 @@ Host: localhost:8080
   ```json
   [
     {
-      "homeTeam": "Team1",
-      "awayTeam": "Team4",
-      "week": 1,
+      "homeTeam": <Team1>,
+      "awayTeam": <Team2>,
+      "isPlayed": True,
       "homeGoals": 2,
       "awayGoals": 1,
-      "result": 1
+      "week": 1,
     },
     { /* ... */ }
   ]
@@ -192,12 +192,12 @@ Host: localhost:8080
   ```json
   [
     {
-      "homeTeam": "Team1",
-      "awayTeam": "Team3",
-      "week": 2,
-      "homeGoals": null,
-      "awayGoals": null,
-      "result": null
+      "homeTeam": <Team1>,
+      "awayTeam": <Team2>,
+      "isPlayed": True,
+      "homeGoals": 2,
+      "awayGoals": 1,
+      "week": 1,
     },
     { /* ... */ }
   ]
@@ -223,12 +223,12 @@ Host: localhost:8080
   ```json
   [
     {
-      "homeTeam": "Team3",
-      "awayTeam": "Team4",
-      "week": 3,
-      "homeGoals": 1,
+      "homeTeam": <Team1>,
+      "awayTeam": <Team2>,
+      "isPlayed": True,
+      "homeGoals": 2,
       "awayGoals": 1,
-      "result": 0
+      "week": 1,
     },
     { /* ... */ }
   ]
@@ -281,11 +281,10 @@ Host: localhost:8080
   ```json
   [
     {
-      "homeTeam": "Team1",
-      "awayTeam": "Team2",
-      "homeWinProb": 0.57,
-      "drawProb": 0.23,
-      "awayWinProb": 0.20
+      "Team1": 26,124,
+      "Team2": 21,008,
+      "Team3": 29,27,
+      "Team4": 23,598,
     },
     { /* ... */ }
   ]
