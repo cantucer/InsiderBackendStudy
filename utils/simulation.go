@@ -9,8 +9,8 @@ import (
 func SimulateMatch(match types.Match) (int, int) {
 	// My super realistic simulation algorithm.
 	// The position of ball is divided into 5 positions.
-	// [ 0, 1, 2, 3, 4, 5, 6, 7, 8]
-	// 0 is goal inside home's goal, 4 is starting position, 8 is goal inside away's goal. So left side is home, right side is away.
+	// [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+	// 0 is goal inside home's goal, 5 is starting position, 10 is goal inside away's goal. So left side is home, right side is away.
 	// Others are intermediate positions.
 	// Movement of ball is determined by the strength of teams + 5 advantage +- 15 luck. But minimum strength is 10.
 	// Game is played for 90 iterations.
@@ -28,7 +28,7 @@ func SimulateMatch(match types.Match) (int, int) {
 		return -1 // Move to the left
 	}
 
-	ballPos := 4
+	ballPos := 5
 	homeScore := 0
 	awayScore := 0
 
@@ -37,10 +37,10 @@ func SimulateMatch(match types.Match) (int, int) {
 
 		if ballPos == 0 {
 			awayScore++
-			ballPos = 4 // Reset ball position after a goal
-		} else if ballPos == 9 {
+			ballPos = 5 // Reset ball position after a goal
+		} else if ballPos == 10 {
 			homeScore++
-			ballPos = 4 // Reset ball position after a goal
+			ballPos = 5 // Reset ball position after a goal
 		}
 	}
 

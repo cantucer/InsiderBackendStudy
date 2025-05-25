@@ -13,7 +13,7 @@ func PredictWinningChances(teams []types.Team, unplayedMatches []types.Match) ma
 
 	points := make(map[string]int)
 
-	for range 1000000 {
+	for range 100000 {
 		for _, team := range teams {
 			points[team.Name] = team.Points
 		}
@@ -47,9 +47,9 @@ func PredictWinningChances(teams []types.Team, unplayedMatches []types.Match) ma
 	}
 
 	chances := make(map[string]float64)
-
 	for team := range winCounts {
-		chances[team] = float64(winCounts[team]) / 10000.0
+		chances[team] = float64(winCounts[team]) / 1000.0
 	}
+
 	return chances
 }
