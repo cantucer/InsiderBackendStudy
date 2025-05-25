@@ -1,4 +1,4 @@
-package simulation
+package utils
 
 import (
 	"insiderbackendstudy/types"
@@ -6,8 +6,8 @@ import (
 	"math/rand"
 )
 
-func PredictMatch(match types.Match) types.Match {
-	// My super realistic prediction algorithm.
+func SimulateMatch(match types.Match) (int, int) {
+	// My super realistic simulation algorithm.
 	// The position of ball is divided into 5 positions.
 	// [ 0, 1, 2, 3, 4, 5, 6, 7, 8]
 	// 0 is goal inside home's goal, 4 is starting position, 8 is goal inside away's goal. So left side is home, right side is away.
@@ -44,12 +44,5 @@ func PredictMatch(match types.Match) types.Match {
 		}
 	}
 
-	return types.Match{
-		HomeTeam:  match.HomeTeam,
-		AwayTeam:  match.AwayTeam,
-		IsPlayed:  true,
-		HomeGoals: homeScore,
-		AwayGoals: awayScore,
-		Week:      match.Week,
-	}
+	return homeScore, awayScore
 }

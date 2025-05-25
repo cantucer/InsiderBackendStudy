@@ -1,17 +1,16 @@
-package simulation
+package utils
 
 import (
 	"insiderbackendstudy/types"
 )
 
-func CreateFixture(teams []types.Team) [][]types.Match {
+func CreateFixture(teams []types.Team) []types.Match {
 	weekCount := (len(teams) - 1) * 2 // Total weeks in a round-robin tournament.
 
 	// Assuming team number is even.
 	matchCountPerWeek := len(teams) / 2
 
 	matches := make([]types.Match, weekCount*matchCountPerWeek)
-	weeks := make([][]types.Match, weekCount)
 
 	for week := range weekCount / 2 {
 		// Using the circle rotation method.
@@ -31,8 +30,6 @@ func CreateFixture(teams []types.Team) [][]types.Match {
 			}
 		}
 
-		weeks[week] = matches[week*matchCountPerWeek : (week+1)*matchCountPerWeek]
-
 		// Rotate teams for next week.
 		rotatingTeams := teams[1:]
 		lastTeam := rotatingTeams[len(rotatingTeams)-1:]
@@ -42,9 +39,7 @@ func CreateFixture(teams []types.Team) [][]types.Match {
 	}
 
 	// Copying from the first half of the fixture.
-
 	for week := weekCount / 2; week < weekCount; week++ {
-
 		for match := range matchCountPerWeek {
 			homeTeam := matches[(weekCount-week-1)*matchCountPerWeek+match].HomeTeam
 			awayTeam := matches[(weekCount-week-1)*matchCountPerWeek+match].AwayTeam
@@ -58,8 +53,7 @@ func CreateFixture(teams []types.Team) [][]types.Match {
 			}
 		}
 
-		weeks[week] = matches[week*matchCountPerWeek : (week+1)*matchCountPerWeek]
 	}
 
-	return weeks
+	return matches
 }
