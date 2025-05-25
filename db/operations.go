@@ -83,7 +83,7 @@ func GetTeams(conn *pgx.Conn) ([]types.Team, error) {
 	return teams, nil
 }
 
-func GetMatches(conn *pgx.Conn) ([]types.Match, error) {
+func GetAllMatches(conn *pgx.Conn) ([]types.Match, error) {
 	rows, err := conn.Query(context.Background(), `
 		SELECT homeTeam, awayTeam, isPlayed, homeGoals, awayGoals, week
 		FROM matches
@@ -101,6 +101,32 @@ func GetMatches(conn *pgx.Conn) ([]types.Match, error) {
 			&match.HomeGoals, &match.AwayGoals, &match.Week); err != nil {
 			return nil, err
 		}
+		matches = append(matches, match)
+	}
+
+	return matches, nil
+}
+
+func GetMatches(conn *pgx.Conn, week int) ([]types.Match, error) {
+	rows, err := conn.Query(context.Background(), `
+		SELECT homeTeam, awayTeam, isPlayed, homeGoals, awayGoals
+		FROM matches
+		WHERE week = $1
+		ORDER BY homeTeam, awayTeam;
+	`, week)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var matches []types.Match
+	for rows.Next() {
+		var match types.Match
+		if err := rows.Scan(&match.HomeTeam.Name, &match.AwayTeam.Name, &match.IsPlayed,
+			&match.HomeGoals, &match.AwayGoals); err != nil {
+			return nil, err
+		}
+		match.Week = week
 		matches = append(matches, match)
 	}
 
