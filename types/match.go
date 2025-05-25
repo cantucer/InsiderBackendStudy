@@ -1,12 +1,10 @@
 package types
 
 type Match struct {
-	homeTeam   Team `json:"homeTeam"`
-	awayTeam   Team `json:"awayTeam"`
-	isPlayed   bool `json:"isPlayed"`
-	homeGoals  int `json:"homeGoals"`
-	awayGoals  int `json:"awayGoals"`
-
-	// 0 if draw, 1 if home wins, 2 if away wins
-	result     int `json:"result"`
+	HomeTeam   Team `json:"homeTeam"`
+	AwayTeam   Team `json:"awayTeam"`
+	IsPlayed   bool `json:"isPlayed"`
+	HomeGoals  int `json:"homeGoals"`
+	AwayGoals  int `json:"awayGoals"`
+	Week       int `json:"week"`
 }
