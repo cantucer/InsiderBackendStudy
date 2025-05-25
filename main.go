@@ -20,6 +20,7 @@ import (
 var conn *pgx.Conn
 var weekNo int // Week that is so far played.
 var simulationDone bool = false
+var port int
 
 func init() {
 	fmt.Println("Hello world!")
@@ -33,6 +34,7 @@ func init() {
 
 	// Connecting to database.
 	databaseURL := os.Getenv("DATABASE_URL")
+	port, _ = strconv.Atoi(os.Getenv("PORT"))
 
 	conn, err = db.Connect(databaseURL)
 	if err != nil {
@@ -130,26 +132,29 @@ func simulateMatch(match types.Match) {
 	}
 }
 
+// Simulate the next week.
 func simulateWeek() bool {
 	weekNo++
 
-	matches, _ := db.GetMatches(conn, weekNo)
-	if len(matches) == 0 {
+	matches, _ := db.GetMatches(conn, weekNo) // Get matches.
+	if len(matches) == 0 {                    // If there are no matches for the week, it means the tournament is done.
 		simulationDone = true
-		return false
+		return false // No more matches to simulate, tournament is done.
 	}
 
+	// Simulate each match for the week.
 	for _, match := range matches {
 		simulateMatch(match)
 	}
 
-	return true
+	return true // Successfully simulated the week.
 }
 
 func main() {
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
 
+	// Reset endpoint to clear the database and reset the simulation.
 	router.POST("/reset", func(c *gin.Context) {
 		reset()
 
@@ -159,8 +164,9 @@ func main() {
 		})
 	})
 
+	// Simulate week and tournament endpoints.
 	router.POST("/simulate_week", func(c *gin.Context) {
-		if simulationDone || !simulateWeek() {
+		if simulationDone || !simulateWeek() { // Simulate a weel.
 			c.JSON(http.StatusOK, gin.H{
 				"status":  "ok",
 				"message": "Simulation for tournament is already done. Reset to simulate again.",
@@ -173,7 +179,6 @@ func main() {
 			"message": fmt.Sprintf("Simulation for week %d is done.", weekNo),
 		})
 	})
-
 	router.POST("/simulate_tournament", func(c *gin.Context) {
 		if simulationDone {
 			c.JSON(http.StatusOK, gin.H{
@@ -182,19 +187,18 @@ func main() {
 			})
 			return
 		}
-
-		for !simulationDone {
+		for !simulationDone { // Simulate weeks until the tournament is done.
 			if !simulateWeek() {
 				break
 			}
 		}
-
 		c.JSON(http.StatusOK, gin.H{
 			"status":  "ok",
 			"message": "Simulation for tournament is done.",
 		})
 	})
 
+	// Endpoints to fetch teams and their statistics.
 	router.GET("/teams", func(c *gin.Context) {
 		teams, err := db.GetTeams(conn)
 		if err != nil {
@@ -208,6 +212,7 @@ func main() {
 		c.JSON(http.StatusOK, teams)
 	})
 
+	/// Endpoint to fetch all matches, matches for a specific week, last matches, next matches.
 	router.GET("/all_matches", func(c *gin.Context) {
 		matches, err := db.GetAllMatches(conn)
 		if err != nil {
@@ -220,7 +225,6 @@ func main() {
 
 		c.JSON(http.StatusOK, matches)
 	})
-
 	router.GET("/matches/:week", func(c *gin.Context) {
 		week := c.Param("week")
 		if week == "" {
@@ -238,7 +242,6 @@ func main() {
 			})
 			return
 		}
-
 		matches, err := db.GetMatches(conn, weekInt)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
@@ -247,10 +250,10 @@ func main() {
 			})
 			return
 		}
-
 		c.JSON(http.StatusOK, matches)
 	})
 
+	// Endpoint to get last matches.
 	router.GET("/last_matches", func(c *gin.Context) {
 		if weekNo == 0 {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -272,6 +275,7 @@ func main() {
 		c.JSON(http.StatusOK, matches)
 	})
 
+	// Endpoint to get next matches.
 	router.GET("/next_matches", func(c *gin.Context) {
 		if simulationDone {
 			c.JSON(http.StatusOK, gin.H{
@@ -293,6 +297,7 @@ func main() {
 		c.JSON(http.StatusOK, matches)
 	})
 
+	// Endpoint to predict winning chances.
 	router.GET("/predict_chances", func(c *gin.Context) {
 		if simulationDone {
 			c.JSON(http.StatusOK, gin.H{
@@ -317,7 +322,8 @@ func main() {
 		c.JSON(http.StatusOK, chances)
 	})
 
-	if err := router.Run(":8080"); err != nil {
+	// Opening the server.
+	if err := router.Run(fmt.Sprintf(":%d", port)); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to run server: %v\n", err)
 		os.Exit(1)
 	}
