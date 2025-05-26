@@ -21,6 +21,7 @@ var conn *pgx.Conn
 var weekNo int // Week that is so far played.
 var simulationDone bool = false
 var port int
+var frontendEnabled bool
 
 func init() {
 	fmt.Println("Hello world!")
@@ -50,6 +51,9 @@ func init() {
 
 	// Resetting the database.
 	reset()
+
+	// Setting up the front end.
+	frontendEnabled, _ = strconv.ParseBool(os.Getenv("FRONTEND_ENABLED"))
 }
 
 func reset() {
@@ -105,6 +109,7 @@ func reset() {
 	}
 
 	weekNo = 0
+	simulationDone = false
 	fmt.Println("Cleared and prepared the database.")
 }
 
@@ -137,8 +142,10 @@ func simulateWeek() bool {
 	weekNo++
 
 	matches, _ := db.GetMatches(conn, weekNo) // Get matches.
-	if len(matches) == 0 {                    // If there are no matches for the week, it means the tournament is done.
+	if len(matches) == 0 {
+		// If there are no matches for the week, it means the tournament is done.
 		simulationDone = true
+		weekNo--     // Decrement week number since no matches were played.
 		return false // No more matches to simulate, tournament is done.
 	}
 
@@ -151,7 +158,7 @@ func simulateWeek() bool {
 }
 
 func main() {
-	gin.SetMode(gin.TestMode)
+	gin.SetMode(gin.DebugMode)
 	router := gin.Default()
 
 	// Reset endpoint to clear the database and reset the simulation.
@@ -313,7 +320,7 @@ func main() {
 		if len(matches) == 0 {
 			c.JSON(http.StatusOK, gin.H{
 				"status":  "ok",
-				"message": "No unplayed matches found.",
+				"message": "Simulation for tournament is already done. Reset to simulate again.",
 			})
 			return
 		}
@@ -321,6 +328,10 @@ func main() {
 		chances := utils.PredictWinningChances(teams, matches)
 		c.JSON(http.StatusOK, chances)
 	})
+
+	if frontendEnabled {
+		router.Static("/frontend", "./frontend")
+	}
 
 	// Opening the server.
 	if err := router.Run(fmt.Sprintf(":%d", port)); err != nil {
