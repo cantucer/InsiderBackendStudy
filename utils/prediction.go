@@ -12,10 +12,12 @@ func PredictWinningChances(teams []types.Team, unplayedMatches []types.Match) ma
 	}
 
 	points := make(map[string]int)
+	goalDifference := make(map[string]int)
 
-	for range 100000 {
+	for range 10000 {
 		for _, team := range teams {
 			points[team.Name] = team.Points
+			goalDifference[team.Name] = team.GoalsFor - team.GoalsAgainst
 		}
 
 		// Simulate each unplayed match.
@@ -31,15 +33,21 @@ func PredictWinningChances(teams []types.Team, unplayedMatches []types.Match) ma
 				points[homeTeam.Name] += 1 // Draw
 				points[awayTeam.Name] += 1 // Draw
 			}
+			goalDifference[homeTeam.Name] += homeGoals - awayGoals
+			goalDifference[awayTeam.Name] += awayGoals - homeGoals
 		}
 
 		// Count points for each team.
-		maxPoints := 0
+		maxPoints := -1
 		winningTeam := ""
 		for _, team := range teams {
 			if points[team.Name] > maxPoints {
 				maxPoints = points[team.Name]
 				winningTeam = team.Name
+			} else if points[team.Name] == maxPoints {
+				if goalDifference[team.Name] > goalDifference[winningTeam] {
+					winningTeam = team.Name
+				}
 			}
 		}
 
@@ -48,7 +56,7 @@ func PredictWinningChances(teams []types.Team, unplayedMatches []types.Match) ma
 
 	chances := make(map[string]float64)
 	for team := range winCounts {
-		chances[team] = float64(winCounts[team]) / 1000.0
+		chances[team] = float64(winCounts[team]) / 100.0
 	}
 
 	return chances
