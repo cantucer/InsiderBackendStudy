@@ -24,6 +24,13 @@ For example, command line request `curl http://34.42.240.198:8080/teams` can be 
 
 4- Refer to the hostname accordingly.
 
+# Testing via Frontend
+You can test the API through the frontend instead of command-line requests.
+
+For the public server, open `http://34.42.240.198:8080/frontend/` in your preferred browser.
+
+For your own setup, open `http://localhost:8080/frontend/` in your preferred browser. 
+
 
 # Endpoints
 
