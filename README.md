@@ -9,10 +9,11 @@ The server will be up from 25/05/2025 to 24/06/2025, and is running on a Compute
 
 There is no authorization.
 
-Public IP: `35.239.226.80`
+Public IP: `34.42.240.198`
 Port: `8080`
 
 Refer to the endpoints for testing, and use the given public IP as the hostname instead of localhost.
+For example, command line request `curl http://34.42.240.198:8080/teams` can be used to get a list of team objects.
 
 # Setting Up
 1- Set up a PostgreSQL database. Preferably use PostgreSQL 15 or later. Name the user and database as you wish. Remember the program will be creating tables named "teams" and "matches" in the database you've provided.
